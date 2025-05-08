@@ -1,0 +1,22 @@
+{
+  "name": "vas3k-quest-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for conducting quests",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.64.0",
+    "pg": "^8.11.3",
+    "sequelize": "^6.37.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0"
+  }
+} 
