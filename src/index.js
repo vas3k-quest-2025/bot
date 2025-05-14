@@ -1,5 +1,5 @@
 require('dotenv').config();
-const TelegramBot = require('node-telegram-bot-api');
+const Tgfancy = require("tgfancy");
 const sequelize = require('./config/database');
 const initDatabase = require('./config/initDb');
 const { handleStartQuest, handleStopQuest, handleListTeams, handleTeamDetails, handleBroadcast, handleTeamTasks } = require('./handlers/adminHandlers');
@@ -8,7 +8,21 @@ const { handleNewChatMember, handleChatTitleUpdate, handleMessage } = require('.
 const { isGroupChat } = require('./utils/chatUtils');
 
 // Инициализация бота
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+const bot = new Tgfancy(
+  process.env.BOT_TOKEN,
+  {
+    polling: true,
+    tgfancy: {
+      textPaging: true,
+      ratelimiting: {
+        maxRetries: 10,
+        timeout: 1000 * 60,
+      },
+      emojification: false,
+      orderedSending: false,
+    }
+  }
+);
 
 // Подключение к базе данных и инициализация таблиц
 const startBot = async () => {

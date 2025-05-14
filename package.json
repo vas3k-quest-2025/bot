@@ -13,10 +13,11 @@
     "node-telegram-bot-api": "^0.64.0",
     "pg": "^8.11.3",
     "sequelize": "^6.37.1",
+    "tgfancy": "^0.13.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.1.0"
   }
-} 
+}

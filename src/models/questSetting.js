@@ -12,15 +12,10 @@ const questSetting = sequelize.define('questSetting', {
     allowNull: false,
     unique: true
   },
-  introText: {
+  value: {
     type: DataTypes.TEXT,
     allowNull: true,
-    field: 'intro_text'
-  },
-  footerText: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    field: 'footer_text'
+    field: 'value'
   }
 }, {
   tableName: 'quest_setting',
