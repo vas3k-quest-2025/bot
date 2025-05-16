@@ -169,27 +169,37 @@ const handleTeamTasks = async (bot, msg, teamId) => {
       }]
     });
 
+    let correctPoints = 0;
+    let correctCount = 0;
+    let lastCodeTime = null;
+
     const taskList = tasks.map(task => {
       const lastAttempt = task.codeAttempts?.[0];
-      let line = `${task.order}. ${task.title}\n`;
+      let line = `${task.order}. ${task.title}\nБаллы: ${task.cost}\n`;
       
       if (lastAttempt) {
         const status = lastAttempt.isCorrect ? '✅' : '❌';
         const code = lastAttempt.code.replace(/`/g, '\\`');
         const correctCode = task.correctCode.replace(/`/g, '\\`');
         line += `${status} \`${code}\` / \`${correctCode}\``;
+        if (lastAttempt.isCorrect) {
+          correctCount++;
+          correctPoints += task.cost;
+        }
+        if (lastAttempt.createdAt > lastCodeTime) {
+          lastCodeTime = lastAttempt.createdAt;
+        }
       } else {
         const correctCode = task.correctCode.replace(/`/g, '\\`');
-        line += `❌ нет попыток / \`${correctCode}\``;
+        line += `🚫 не сдавали / \`${correctCode}\``;
       }
       
       return line;
     }).join('\n\n');
 
-    const correctCount = tasks.filter(t => t.CodeAttempts?.[0]?.isCorrect).length;
     await bot.sendMessage(
       msg.chat.id,
-      `*Задания команды «${team.name}»*\n\n${taskList}\n\n*Правильно выполнено:* ${correctCount}`,
+      `*Задания команды «${team.name}»*\n\n${taskList}\n\n*Правильно выполнено:* ${correctCount}\n*Суммарный балл:* ${correctPoints}\nПоследняя сдача: ${lastCodeTime}`,
       { parse_mode: 'Markdown' },
     );
   } catch (error) {

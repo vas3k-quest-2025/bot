@@ -110,6 +110,7 @@ const handleTaskList = async (bot, msg) => {
     // Добавляем каждое задание
     for (const task of tasks) {
       messageText += `*${task.order}. ${task.title}*\n`;
+      messageText += '⚖️ ' + points(task.cost) + "\n";
       messageText += `${task.description}\n`;
       
       // Статус задания
@@ -134,6 +135,23 @@ const handleTaskList = async (bot, msg) => {
     await bot.sendMessage(chatId, 'Произошла ошибка при получении списка заданий');
   }
 };
+
+const points = (cost) => {
+  if (cost >= 5 && cost <= 20) {
+    return cost + ' баллов';
+  }
+
+  const lastCostDigit = cost % 10;
+  if (lastCostDigit === 1) {
+    return cost + ' балл';
+  }
+
+  if (lastCostDigit >= 2 && lastCostDigit <= 4) {
+    return cost + ' балла';
+  }
+
+  return cost + ' баллов';
+}
 
 module.exports = {
   handleCodeSubmission,

@@ -24,6 +24,11 @@ const task = sequelize.define('task', {
     type: DataTypes.STRING,
     allowNull: false,
     field: 'correct_code'
+  },
+  cost: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1,
   }
 }, {
   tableName: 'task',
