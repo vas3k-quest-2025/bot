@@ -43,7 +43,8 @@ const handleCodeSubmission = async (bot, msg, args) => {
       return bot.sendMessage(chatId, 'Квест не активен');
     }
 
-    const [taskNum, code] = args.split(' ', 2);
+    const [taskNum, ...codeparts] = args.split(' ');
+    const code = codeparts.join(" ");
     if (!taskNum || !code) {
       return bot.sendMessage(chatId, 'Неверный формат команды. Используйте: /code <номер> <код>');
     }
@@ -112,7 +113,7 @@ const handleTaskList = async (bot, msg) => {
       messageText += `${task.description}\n`;
       
       // Статус задания
-      const lastAttempt = task.CodeAttempts?.[0];
+      const lastAttempt = task.codeAttempts?.[0];
       if (lastAttempt) {
         const code = lastAttempt.code.replace(/`/g, '\\`');
         messageText += `✍️ Принят код: \`${code}\`\n`;

@@ -170,7 +170,7 @@ const handleTeamTasks = async (bot, msg, teamId) => {
     });
 
     const taskList = tasks.map(task => {
-      const lastAttempt = task.CodeAttempts?.[0];
+      const lastAttempt = task.codeAttempts?.[0];
       let line = `${task.order}. ${task.title}\n`;
       
       if (lastAttempt) {

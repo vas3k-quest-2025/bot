@@ -1,0 +1,24 @@
+# Ignore project specific
+src/node_modules
+
+# Ignore editor and IDE specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore OS generated files
+.DS_Store
+.localized
+
+# Ignore environment variables file
+.env
+.env.*
+
+# Ignore coverage reports
+.coverage
+coverage.xml
+.nyc_output/
+
+# Ignore volume dir
+postgres_data

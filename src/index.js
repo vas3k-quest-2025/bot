@@ -1,4 +1,3 @@
-require('dotenv').config();
 const Tgfancy = require("tgfancy");
 const sequelize = require('./config/database');
 const initDatabase = require('./config/initDb');

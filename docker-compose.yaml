@@ -2,26 +2,29 @@ version: '3.8'
 
 services:
   app:
-    build: .
-    environment:
-      - NODE_ENV=development
-      - DB_HOST=postgres
+    restart: unless-stopped
+    build: src
     depends_on:
       - postgres
-    volumes:
-      - .:/app
-      - /app/node_modules
+    env_file:
+      - .env
 
   postgres:
+    restart: unless-stopped
     image: postgres:15-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=quest_bot
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
 
-volumes:
-  postgres_data: 
+  pgadmin:
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    ports:
+      - 127.0.0.1:9432:80
+    env_file:
+      - .env
+    volumes:
+      - ./pgadmin_storage:/var/lib/pgadmin/storage/
