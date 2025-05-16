@@ -125,7 +125,7 @@ const handleTaskList = async (bot, msg) => {
 
     if (footer && footer.value !== null) {
       // Добавляем примечание
-      messageText += `\n${footer.value}`;
+      messageText += `${footer.value}`;
     }
     
     await bot.sendMessage(chatId, messageText, { parse_mode: 'Markdown' });
