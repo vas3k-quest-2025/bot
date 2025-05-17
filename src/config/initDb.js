@@ -28,12 +28,12 @@ const initDatabase = async () => {
     defineRelations();
 
     // Синхронизируем модели с базой данных
-    await team.sync();
-    await task.sync();
-    await teamMember.sync();
-    await codeAttempt.sync();
-    await questState.sync();
-    await questSettings.sync();
+    await team.sync({ alter: true });
+    await task.sync({ alter: true });
+    await teamMember.sync({ alter: true });
+    await codeAttempt.sync({ alter: true });
+    await questState.sync({ alter: true });
+    await questSettings.sync({ alter: true });
 
     // Создаем начальное состояние квеста, если его нет
     const initQuestState = await questState.findOne();

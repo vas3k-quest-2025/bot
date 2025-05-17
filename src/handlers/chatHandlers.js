@@ -1,6 +1,7 @@
 const Team = require('../models/team');
 const TeamMember = require('../models/teamMember');
 const QuestState = require('../models/questState');
+const fetch = require('node-fetch');
 
 // Обработка новых участников
 const handleNewChatMember = async (bot, msg) => {
@@ -135,6 +136,7 @@ const addTeamMember = async (bot, chatId, user) => {
     // Проверяем, активен ли квест
     const questState = await QuestState.findOne();
     const isQuestActive = questState && questState.isActive;
+    const { clubName, clubSlug } = await fetchClubUserData(user.id);
 
     // Добавляем нового участника
     await TeamMember.create({
@@ -143,21 +145,36 @@ const addTeamMember = async (bot, chatId, user) => {
       username: user.username,
       firstName: user.first_name,
       lastName: user.last_name,
-      isInitialMember: !isQuestActive
+      isInitialMember: !isQuestActive,
+      clubName: clubName,
+      clubSlug: clubSlug
     });
+
+    const isClubMember = clubSlug !== null;
+    const clubPresence = isClubMember ? `[${clubName}](https://vas3k.club/user/${clubSlug})` : '🚨 Не из клуба!';
 
     // Если квест активен, отправляем уведомления
     if (isQuestActive) {
       // Отправляем уведомление в чат команды
       const memberName = user.username ? `@${user.username}` : `${user.first_name} ${user.last_name}`;
-      await bot.sendMessage(chatId, `⚠️ Внимание! ${memberName} не был в команде на момент начала квеста.`);
+      await bot.sendMessage(chatId, `⚠️ Внимание! ${memberName} (${clubPresence}) не был в команде на момент начала квеста.`, { parse_mode: 'Markdown' });
 
       // Отправляем уведомление в админский чат
-      const adminMessage = `⚠️ В команду «${team.name}» вступил новый участник [${memberName}](tg://user?id=${user.id})`;
+      const adminMessage = `⚠️ В команду «${team.name}» вступил новый участник [${memberName}](tg://user?id=${user.id}) ${clubPresence}`;
       await bot.sendMessage(process.env.ADMIN_CHAT_ID, adminMessage, { parse_mode: 'Markdown' });
     }
+
+    return;
   } catch (error) {
     console.error('Error adding team member:', error);
+  }
+
+  if (!isClubMember) {
+    const memberName = user.username ? `@${user.username}` : `${user.first_name} ${user.last_name}`;
+    await bot.sendMessage(chatId, `⚠️ Внимание! ${memberName} (${clubPresence}) не состоит в клубе!`);
+
+    const adminMessage = `⚠️ В команде «${team.name}» новый участник [${memberName}](tg://user?id=${user.id}), не состоящий в клубе!`;
+    await bot.sendMessage(process.env.ADMIN_CHAT_ID, adminMessage, { parse_mode: 'Markdown' });
   }
 };
 
@@ -184,6 +201,32 @@ const handleMessage = async (bot, msg) => {
   } catch (error) {
     console.error('Error handling message:', error);
   }
+};
+
+const fetchClubUserData = async (telegramId) => {
+  let clubName = null;
+  let clubSlug = null;
+
+  try {
+    const response = await fetch(`https://vas3k.club/user/by_telegram_id/${telegramId}.json`, {
+      headers: {
+        'X-Service-Token': process.env.VAS3K_TOKEN
+      }
+    });
+
+    if (response.ok) {
+      const userData = await response.json();
+      console.log(userData);
+      clubName = userData.user.full_name || null;
+      clubSlug = userData.user.slug || null;
+    } else if (response.status !== 404) {
+      console.error(`Error fetching user data from Club API: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error calling Club API:', error);
+  }
+
+  return { clubName, clubSlug };
 };
 
 module.exports = {

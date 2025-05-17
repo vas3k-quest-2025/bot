@@ -35,6 +35,16 @@ const teamMember = sequelize.define('teamMember', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
     field: 'is_initial_member'
+  },
+  clubName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'club_name'
+  },
+  clubSlug: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'club_slug'
   }
 }, {
   tableName: 'team_member',

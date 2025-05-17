@@ -121,11 +121,12 @@ const handleTeamDetails = async (bot, msg, teamId) => {
 
     const members = await TeamMember.findAll({ where: { teamId } });
     const memberList = members.map(member => {
-      const link = member.username ? `@${member.username}` : `${member.firstName} ${member.lastName}`;
-      return `${link} ${member.isInitialMember ? '✅' : '⚠️'}`;
+      const clubPresence = member.clubSlug !== null ? `[${member.clubName}](https://vas3k.club/user/${member.clubSlug})` : '🚨 не в клубе!'
+      const name = member.username ? `@${member.username}` : `${member.firstName} ${member.lastName}`;
+      return `${name} (${clubPresence})${member.isInitialMember ? '✅' : '⚠️'}`;
     }).join('\n');
 
-    await bot.sendMessage(msg.chat.id, `Команда: ${team.name}\n\nУчастники:\n${memberList}`);
+    await bot.sendMessage(msg.chat.id, `Команда: ${team.name}\n\nУчастники:\n${memberList}`, { parse_mode: 'Markdown' });
   } catch (error) {
     console.error('Error getting team details:', error);
     await bot.sendMessage(msg.chat.id, 'Произошла ошибка при получении информации о команде');
