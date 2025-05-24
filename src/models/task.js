@@ -23,13 +23,19 @@ const task = sequelize.define('task', {
   },
   correctCode: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     field: 'correct_code'
   },
   cost: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1,
+  },
+  taskType: {
+    type: DataTypes.ENUM('regular', 'agent', 'photo'),
+    allowNull: false,
+    defaultValue: 'regular',
+    field: 'task_type'
   },
   createdAt: {
     type: DataTypes.DATE,

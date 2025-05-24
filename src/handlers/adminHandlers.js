@@ -179,14 +179,20 @@ const handleTeamTasks = async (bot, msg, teamId) => {
       let line = `${task.order}. ${task.title}\nБаллы: ${task.cost}\n`;
       
       if (lastAttempt) {
-        const status = lastAttempt.isCorrect ? '✅' : '❌';
-        const code = lastAttempt.code.replace(/`/g, '\\`');
-        const correctCode = task.correctCode.replace(/`/g, '\\`');
-        line += `${status} \`${code}\` / \`${correctCode}\``;
-        if (lastAttempt.isCorrect) {
-          correctCount++;
-          correctPoints += task.cost;
+        if (task.taskType === 'photo') {
+          line += `📸 Принято фото\n`;
+        } else {
+          const status = lastAttempt.isCorrect ? '✅' : '❌';
+          const code = lastAttempt.code.replace(/`/g, '\\`');
+          const correctCode = task.correctCode.replace(/`/g, '\\`');
+          line += `${status} \`${code}\` / \`${correctCode}\``;
+        
+          if (lastAttempt.isCorrect) {
+            correctCount++;
+            correctPoints += task.cost;
+          }
         }
+
         if (lastAttempt.createdAt > lastCodeTime) {
           lastCodeTime = lastAttempt.createdAt;
         }
@@ -198,9 +204,13 @@ const handleTeamTasks = async (bot, msg, teamId) => {
       return line;
     }).join('\n\n');
 
+
+    const photosUrl = `https://${process.env.PHOTOS_DOMAIN}/${process.env.PHOTOS_SECRET_PATH}/${teamId}/`;
+    const photosMessage = `\n📸 [Фотографии команды](${photosUrl})`;
+
     await bot.sendMessage(
       msg.chat.id,
-      `*Задания команды «${team.name}»*\n\n${taskList}\n\n*Правильно выполнено:* ${correctCount}\n*Суммарный балл:* ${correctPoints}\nПоследняя сдача: ${lastCodeTime}`,
+      `*Задания команды «${team.name}»*\n\n${taskList}\n\n*Правильно выполнено:* ${correctCount}\n*Суммарный балл:* ${correctPoints}\nПоследняя сдача: ${lastCodeTime}\n${photosMessage}`,
       { parse_mode: 'Markdown' },
     );
   } catch (error) {

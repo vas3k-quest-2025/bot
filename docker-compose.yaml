@@ -8,6 +8,8 @@ services:
       - postgres
     env_file:
       - .env
+    volumes:
+      - ./user_files:/app/user_files
 
   postgres:
     restart: unless-stopped
@@ -28,3 +30,15 @@ services:
       - .env
     volumes:
       - ./pgadmin_storage:/var/lib/pgadmin/storage/
+
+  nginx:
+    restart: unless-stopped
+    build: ./nginx
+    ports:
+      - "127.0.0.1:8081:80"
+    volumes:
+      - ./user_files:/app/user_files
+    environment:
+      - SECRET_PATH=${PHOTOS_SECRET_PATH}
+    env_file:
+      - .env

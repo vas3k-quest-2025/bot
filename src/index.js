@@ -2,7 +2,7 @@ const Tgfancy = require("tgfancy");
 const sequelize = require('./config/database');
 const initDatabase = require('./config/initDb');
 const { handleStartQuest, handleStopQuest, handleListTeams, handleTeamDetails, handleBroadcast, handleTeamTasks } = require('./handlers/adminHandlers');
-const { handleCodeSubmission, handleTaskList } = require('./handlers/teamHandlers');
+const { handleCodeSubmission, handleTaskList, handlePhoto } = require('./handlers/teamHandlers');
 const { handleNewChatMember, handleChatTitleUpdate, handleMessage } = require('./handlers/chatHandlers');
 const { isGroupChat } = require('./utils/chatUtils');
 
@@ -98,6 +98,20 @@ bot.on('new_chat_title', (msg) => {
 bot.on('message', (msg) => {
   if (!isGroupChat(msg.chat)) return;
   handleMessage(bot, msg);
+});
+
+// Обработка фотографий
+bot.on('photo', (msg) => {
+  if (!isGroupChat(msg.chat)) return;
+  handlePhoto(bot, msg);
+});
+
+// Обработка документов (для изображений)
+bot.on('document', (msg) => {
+  if (!isGroupChat(msg.chat)) return;
+  if (msg.document.mime_type.startsWith('image/')) {
+    handlePhoto(bot, msg);
+  }
 });
 
 // Обработка команды help
