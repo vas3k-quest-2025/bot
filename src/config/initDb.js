@@ -35,6 +35,26 @@ const initDatabase = async () => {
     await questState.sync({ alter: true });
     await questSettings.sync({ alter: true });
 
+    // Добавляем функцию и триггер для автоматического обновления updated_at только для задач (чтобы удобнее было кидать их вручную в базу)
+    await sequelize.query(`
+      CREATE OR REPLACE FUNCTION update_updated_at()
+      RETURNS TRIGGER AS $$
+      BEGIN
+          NEW.updated_at = NOW();
+          RETURN NEW;
+      END;
+      $$ language 'plpgsql';
+    `);
+
+    await sequelize.query(`
+      DROP TRIGGER IF EXISTS update_task_updated_at ON public.task;
+
+      CREATE TRIGGER update_task_updated_at
+      BEFORE UPDATE ON public.task
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at();
+    `);
+
     // Создаем начальное состояние квеста, если его нет
     const initQuestState = await questState.findOne();
     if (!initQuestState) {

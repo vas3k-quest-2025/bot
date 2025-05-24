@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const sequelize = require('../config/database');
+
 
 const task = sequelize.define('task', {
   id: {
@@ -29,10 +30,22 @@ const task = sequelize.define('task', {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'created_at',
+    defaultValue: Sequelize.literal('NOW()'),
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'updated_at',
+    defaultValue: Sequelize.literal('NOW()'),
   }
 }, {
   tableName: 'task',
-  timestamps: true,
+  timestamps: false,
   underscored: true
 });
 
