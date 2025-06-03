@@ -122,7 +122,7 @@ const handleTeamDetails = async (bot, msg, teamId) => {
     const members = await TeamMember.findAll({ where: { teamId } });
     const memberList = members.map(member => {
       const clubPresence = member.clubSlug !== null ? `[${member.clubName}](https://vas3k.club/user/${member.clubSlug})` : '🚨 не в клубе!'
-      const name = member.username ? `@${member.username}` : `${member.firstName} ${member.lastName}`;
+      const name = `[${member.firstName} ${member.lastName}](tg://user?id=${member.userId})`;
       return `${name} (${clubPresence})${member.isInitialMember ? '✅' : '⚠️'}`;
     }).join('\n');
 
@@ -180,7 +180,7 @@ const handleTeamTasks = async (bot, msg, teamId) => {
       
       if (lastAttempt) {
         if (task.taskType === 'photo') {
-          line += `📸 Принято фото\n`;
+          line += `📸 Принято фото/видео\n`;
         } else {
           const status = lastAttempt.isCorrect ? '✅' : '❌';
           const code = lastAttempt.code.replace(/`/g, '\\`');

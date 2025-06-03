@@ -47,13 +47,13 @@ const handleCodeSubmission = async (bot, msg, args) => {
   
   try {
     if (!await isQuestActive()) {
-      return bot.sendMessage(chatId, 'Квест не активен');
+      return bot.sendMessage(chatId, 'Квест не активен', { reply_to_message_id: msg.message_id });
     }
 
     const [taskNum, ...codeparts] = args.split(' ');
     const code = codeparts.join(" ");
     if (!taskNum || !code) {
-      return bot.sendMessage(chatId, 'Неверный формат команды. Используйте: /code <номер> <код>');
+      return bot.sendMessage(chatId, 'Неверный формат команды. Используйте: /code <номер> <код>', { reply_to_message_id: msg.message_id });
     }
 
     const team = await Team.findOne({ where: { chatId: chatId.toString() } });
@@ -63,11 +63,11 @@ const handleCodeSubmission = async (bot, msg, args) => {
 
     const task = await Task.findOne({where: { order: taskNum } });
     if (!task) {
-      return bot.sendMessage(chatId, 'Нет задания с таким номером...');
+      return bot.sendMessage(chatId, 'Нет задания с таким номером...', { reply_to_message_id: msg.message_id });
     }
 
     if (task.taskType === 'photo') {
-      return bot.sendMessage(chatId, 'Для фотозаданий нельзя сдавать код. Отправьте фотографию в чат с номером задания в подписи.');
+      return bot.sendMessage(chatId, 'Для фотозаданий нельзя сдавать код. Отправьте фотографию в чат с номером задания в подписи.', { reply_to_message_id: msg.message_id });
     }
 
     const isCorrect = isCodeCorrect(task, code);
@@ -81,7 +81,7 @@ const handleCodeSubmission = async (bot, msg, args) => {
     await bot.sendMessage(chatId, 'Код принят', { reply_to_message_id: msg.message_id });
   } catch (error) {
     console.error('Error submitting code:', error);
-    await bot.sendMessage(chatId, 'Произошла ошибка при отправке кода');
+    await bot.sendMessage(chatId, 'Произошла ошибка при отправке кода', { reply_to_message_id: msg.message_id });
   }
 };
 
@@ -142,7 +142,7 @@ const handleTaskList = async (bot, msg) => {
       const lastAttempt = task.codeAttempts?.[0];
       if (lastAttempt) {
         if (task.taskType === 'photo') {
-          messageText += `📸 Принято фото\n`;
+          messageText += `📸 Принято фото/видео\n`;
         } else {
           const code = lastAttempt.code.replace(/`/g, '\\`');
           messageText += `✍️ Принят код: \`${code}\`\n`;
@@ -196,7 +196,7 @@ const handlePhoto = async (bot, msg) => {
     }
 
     if (!msg.caption) {
-      return bot.sendMessage(chatId, 'Добавьте номер задания в подпись к фото');
+      return bot.sendMessage(chatId, 'Добавьте номер задания в подпись к фото/видео');
     }
 
     const taskNum = msg.caption.trim();
@@ -216,7 +216,7 @@ const handlePhoto = async (bot, msg) => {
     } else if (msg.document && msg.document.mime_type.startsWith('image/')) {
       file = await bot.getFile(msg.document.file_id);
     } else {
-      return bot.sendMessage(chatId, 'Отправьте фотографию или изображение');
+      return bot.sendMessage(chatId, 'Отправьте фотографию или видео');
     }
 
     const teamDir = path.join('/app/user_files', team.id.toString());
@@ -249,10 +249,10 @@ const handlePhoto = async (bot, msg) => {
       isCorrect: true
     });
 
-    await bot.sendMessage(chatId, 'Фото принято', { reply_to_message_id: msg.message_id });
+    await bot.sendMessage(chatId, 'Фото/видео принято', { reply_to_message_id: msg.message_id });
   } catch (error) {
     console.error('Error handling photo:', error);
-    await bot.sendMessage(chatId, 'Произошла ошибка при обработке фото');
+    await bot.sendMessage(chatId, 'Произошла ошибка при обработке фото/видео');
   }
 };
 

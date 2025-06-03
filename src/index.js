@@ -73,8 +73,26 @@ bot.onText(/\/team_tasks (.+)/, (msg, match) => {
 // Обработка команд команд
 bot.onText(/\/code (.+)/, (msg, match) => {
   if (!isGroupChat(msg.chat)) return;
-  handleCodeSubmission(bot, msg, match[1]);
+  handleCodeSubmission (bot, msg, match[1]);
 });
+
+// Обработка команд команд
+bot.onText(/^\/code(|@.+)$/, (msg) => {
+  if (!isGroupChat(msg.chat)) return;
+  return bot.sendMessage(
+    msg.chat.id,
+    'Отправьте номер задания и кодовое слово в формате /code <номер> <слово>, например `/code 1 привет`',
+    { parse_mode: 'Markdown', reply_to_message_id: msg.message_id },
+  );
+});
+
+bot.onText(/\/flag/, (msg) => {
+  return bot.sendMessage(
+    msg.chat.id,
+    '`CTF{n30n_4rc4d3}`',
+    { parse_mode: 'Markdown'},
+  )
+})
 
 bot.onText(/\/tasks/, (msg) => {
   if (!isGroupChat(msg.chat)) return;
@@ -102,6 +120,12 @@ bot.on('message', (msg) => {
 
 // Обработка фотографий
 bot.on('photo', (msg) => {
+  if (!isGroupChat(msg.chat)) return;
+  handlePhoto(bot, msg);
+});
+
+// Обработка фотографий
+bot.on('video', (msg) => {
   if (!isGroupChat(msg.chat)) return;
   handlePhoto(bot, msg);
 });
@@ -135,7 +159,7 @@ bot.onText(/\/help/, (msg) => {
   } else {
     helpText += '`/code` <номер задания> <код> - Отправить код (например `/code 1 секретныйкод`)\n' +
                 '/tasks - Посмотреть список заданий\n' + 
-                'Для ответа на фотозадание отправьте фотографию в чат с номером задания в подписи к файлу';
+                'Для ответа на фотозадание отправьте фотографию или видео в чат с номером задания в подписи к файлу';
   }
   
   bot.sendMessage(chatId, helpText, { parse_mode: 'Markdown' });
