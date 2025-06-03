@@ -197,7 +197,7 @@ const handleTeamTasks = async (bot, msg, teamId) => {
           lastCodeTime = lastAttempt.createdAt;
         }
       } else {
-        const correctCode = task.correctCode.replace(/`/g, '\\`');
+        const correctCode = task.correctCode?.replace(/`/g, '\\`');
         line += `🚫 не сдавали / \`${correctCode}\``;
       }
       

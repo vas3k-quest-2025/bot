@@ -213,7 +213,12 @@ const handlePhoto = async (bot, msg) => {
     if (msg.photo) {
       const photo = msg.photo[msg.photo.length - 1];
       file = await bot.getFile(photo.file_id);
-    } else if (msg.document && msg.document.mime_type.startsWith('image/')) {
+    } else if (msg.video) {
+      file = await bot.getFile(msg.video.file_id);
+    } else if (
+      msg.document && msg.document.mime_type.startsWith('image/')
+      || msg.document.mime_type.startsWith('video/')
+    ) {
       file = await bot.getFile(msg.document.file_id);
     } else {
       return bot.sendMessage(chatId, 'Отправьте фотографию или видео');
