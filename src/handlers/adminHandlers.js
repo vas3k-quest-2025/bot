@@ -100,8 +100,18 @@ const handleListTeams = async (bot, msg) => {
   if (!isAdmin(msg.chat.id)) return;
 
   try {
-    const teams = await Team.findAll();
-    const teamList = teams.map(team => `${team.id}. ${team.name}`).join('\n');
+    const teams = await Team.findAll({
+      include: [{
+        model: TeamMember,
+        attributes: ['id']
+      }]
+    });
+    
+    const teamList = teams.map(team => {
+      const memberCount = team.teamMembers.length;
+      return `${team.id}. ${team.name} (${memberCount} игроков)`;
+    }).join('\n');
+    
     await bot.sendMessage(msg.chat.id, `Список команд:\n${teamList}`);
   } catch (error) {
     console.error('Error listing teams:', error);

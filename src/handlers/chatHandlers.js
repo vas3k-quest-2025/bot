@@ -70,7 +70,8 @@ const handleNewChatMember = async (bot, msg) => {
           });
         }
 
-        await bot.sendMessage(chatId, 'Привет! Я бот для проведения квеста. Используйте /help для просмотра доступных команд.');
+        // @TODO поменять текст на хелп для игроков
+        await bot.sendMessage(chatId, `Привет! Я бот для проведения квеста. Мои команды:\n/tasks — список заданий\n/code <номер> <код> — сдать задание\n/help — справка`);
         return;
       }
     }

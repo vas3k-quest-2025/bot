@@ -147,8 +147,6 @@ const handleTaskList = async (bot, msg) => {
           const code = lastAttempt.code.replace(/`/g, '\\`');
           messageText += `✍️ Принят код: \`${code}\`\n`;
         }
-      } else {
-        messageText += '❌ Ещё не сдано\n';
       }
       messageText += '\n';
     }
@@ -199,7 +197,7 @@ const handlePhoto = async (bot, msg) => {
       return bot.sendMessage(chatId, 'Добавьте номер задания в подпись к фото/видео');
     }
 
-    const taskNum = msg.caption.trim();
+    const taskNum = msg.caption.replace(/\D/g, '');
     const task = await Task.findOne({ where: { order: taskNum } });
     if (!task) {
       return bot.sendMessage(chatId, 'Нет задания с таким номером...');
